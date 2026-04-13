@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrowdSolve — Problem Solving Marketplace</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg: #f8f9fc;
+      --card: #fff;
+      --border: #e2e8f0;
+      --text: #1a202c;
+      --muted: #64748b;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --sidebar: #1e1b4b;
+      --sidebar-text: #c7d2fe;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 600px;
+      overflow-x: hidden
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    /* AUTH */
+    #auth-screen {
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4f46e5 100%)
+    }
+
+    .auth-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 380px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .25)
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 1.5rem
+    }
+
+    .auth-logo h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    .auth-logo p {
+      color: #64748b;
+      font-size: .875rem;
+      margin-top: .25rem
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 1.5rem
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: .5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .875rem;
+      font-weight: 500;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      transition: all .2s
+    }
+
+    .auth-tab.active {
+      background: #fff;
+      color: #4f46e5;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .12)
+    }
+
+    .form-group {
+      margin-bottom: 1rem
+    }
+
+    .form-group label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: .375rem;
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: .625rem .875rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: .9rem;
+      color: #1a202c;
+      outline: none;
+      transition: border .2s
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .1)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .625rem 1.25rem;
+      border-radius: 8px;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      text-decoration: none
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: #4338ca
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: #fff
+    }
+
+    .btn-success:hover {
+      background: #059669
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff
+    }
+
+    .btn-danger:hover {
+      background: #dc2626
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #374151;
+      border: 1px solid #e2e8f0
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0
+    }
+
+    .btn-warning {
+      background: #f59e0b;
+      color: #fff
+    }
+
+    .btn-sm {
+      padding: .375rem .75rem;
+      font-size: .8rem
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center
+    }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: .8rem;
+      margin-top: .375rem
+    }
+
+    .success-msg {
+      color: #10b981;
+      font-size: .8rem;
+      margin-top: .375rem
+    }
+
+    /* LAYOUT */
+    #app {
+      display: flex;
+      min-height: 600px
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--sidebar);
+      flex-shrink: 0;
+      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .1)
+    }
+
+    .sidebar-logo h2 {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700
+    }
+
+    .sidebar-logo p {
+      color: var(--sidebar-text);
+      font-size: .75rem;
+      margin-top: .25rem
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      flex: 1
+    }
+
+    .nav-section {
+      padding: .5rem 1.5rem .25rem;
+      font-size: .65rem;
+      font-weight: 700;
+      color: #6366f1;
+      text-transform: uppercase;
+      letter-spacing: .1em
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .6rem 1.5rem;
+      color: var(--sidebar-text);
+      cursor: pointer;
+      transition: all .2s;
+      font-size: .875rem;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .08);
+      color: #fff
+    }
+
+    .nav-item.active {
+      background: rgba(99, 102, 241, .3);
+      color: #fff;
+      border-right: 3px solid #6366f1
+    }
+
+    .nav-item .icon {
+      width: 18px;
+      text-align: center;
+      font-size: 1rem
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, .1)
+    }
+
+    .sidebar-user-info {
+      display: flex;
+      align-items: center;
+      gap: .625rem
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .8rem;
+      flex-shrink: 0
+    }
+
+    .avatar-purple {
+      background: #6366f1;
+      color: #fff
+    }
+
+    .avatar-green {
+      background: #10b981;
+      color: #fff
+    }
+
+    .avatar-blue {
+      background: #3b82f6;
+      color: #fff
+    }
+
+    .avatar-orange {
+      background: #f59e0b;
+      color: #fff
+    }
+
+    .sidebar-user-name {
+      font-size: .8rem;
+      font-weight: 600;
+      color: #fff
+    }
+
+    .sidebar-user-role {
+      font-size: .7rem;
+      color: var(--sidebar-text)
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 600px
+    }
+
+    .page {
+      display: none;
+      padding: 1.5rem
+    }
+
+    .page.active {
+      display: block
+    }
+
+    .page-header {
+      margin-bottom: 1.5rem
+    }
+
+    .page-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    .page-header p {
+      color: #64748b;
+      font-size: .875rem;
+      margin-top: .25rem
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.1rem;
+      position: relative;
+      overflow: hidden
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      opacity: .08;
+      transform: translate(20px, -20px)
+    }
+
+    .stat-card.purple::before {
+      background: #6366f1
+    }
+
+    .stat-card.green::before {
+      background: #10b981
+    }
+
+    .stat-card.blue::before {
+      background: #3b82f6
+    }
+
+    .stat-card.orange::before {
+      background: #f59e0b
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    .stat-label {
+      font-size: .75rem;
+      color: #64748b;
+      margin-top: .25rem
+    }
+
+    .stat-icon {
+      font-size: 1.3rem;
+      margin-bottom: .5rem
+    }
+
+    /* CARDS */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      gap: 1rem
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    .card-subtitle {
+      font-size: .8rem;
+      color: #64748b;
+      margin-top: .2rem
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: .25rem .625rem;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .badge-open {
+      background: #dbeafe;
+      color: #1d4ed8
+    }
+
+    .badge-in-progress {
+      background: #fef3c7;
+      color: #92400e
+    }
+
+    .badge-solved {
+      background: #d1fae5;
+      color: #065f46
+    }
+
+    .badge-closed {
+      background: #f1f5f9;
+      color: #475569
+    }
+
+    .badge-admin {
+      background: #ede9fe;
+      color: #5b21b6
+    }
+
+    .badge-user {
+      background: #e0f2fe;
+      color: #0369a1
+    }
+
+    /* PROBLEM CARDS */
+    .problem-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: .875rem;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .problem-card:hover {
+      border-color: #6366f1;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, .12)
+    }
+
+    .problem-meta {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      flex-wrap: wrap;
+      margin-bottom: .75rem
+    }
+
+    .problem-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e1b4b;
+      margin-bottom: .5rem
+    }
+
+    .problem-desc {
+      font-size: .85rem;
+      color: #475569;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .problem-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: .875rem;
+      padding-top: .75rem;
+      border-top: 1px solid #f1f5f9
+    }
+
+    .problem-stats {
+      display: flex;
+      gap: 1rem
+    }
+
+    .problem-stat {
+      font-size: .78rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: .3rem
+    }
+
+    /* CATEGORY PILLS */
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: .2rem .625rem;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+      background: #ede9fe;
+      color: #5b21b6
+    }
+
+    /* SOLUTION CARDS */
+    .solution-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: .75rem
+    }
+
+    .solution-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: .625rem
+    }
+
+    .solution-author {
+      display: flex;
+      align-items: center;
+      gap: .5rem
+    }
+
+    .solution-content {
+      font-size: .875rem;
+      color: #374151;
+      line-height: 1.65
+    }
+
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: .625rem
+    }
+
+    .score-label {
+      font-size: .72rem;
+      color: #64748b;
+      width: 80px
+    }
+
+    .score-track {
+      flex: 1;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--primary);
+      transition: width .4s
+    }
+
+    .score-val {
+      font-size: .72rem;
+      font-weight: 700;
+      color: #374151;
+      width: 30px;
+      text-align: right
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem
+    }
+
+    thead tr {
+      background: #f8fafc
+    }
+
+    th {
+      padding: .625rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 2px solid #e2e8f0
+    }
+
+    td {
+      padding: .625rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #374151;
+      vertical-align: middle
+    }
+
+    tr:hover td {
+      background: #fafbff
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .2)
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: #64748b;
+      line-height: 1;
+      padding: .25rem
+    }
+
+    .modal-close:hover {
+      color: #1e1b4b
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 1.25rem
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: .5rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      transition: all .2s
+    }
+
+    .tab.active {
+      background: #fff;
+      color: #4f46e5;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .1)
+    }
+
+    /* SEARCH & FILTER */
+    .filter-bar {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: .5rem .875rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: .85rem;
+      outline: none;
+      color: #374151
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      border-color: #6366f1
+    }
+
+    .filter-bar input {
+      flex: 1;
+      min-width: 180px
+    }
+
+    /* RATING STARS */
+    .stars {
+      display: flex;
+      gap: 3px
+    }
+
+    .star {
+      font-size: 1rem;
+      cursor: pointer;
+      color: #e2e8f0;
+      transition: color .15s
+    }
+
+    .star.filled {
+      color: #f59e0b
+    }
+
+    /* LEADERBOARD */
+    .leader-item {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      padding: .75rem 0;
+      border-bottom: 1px solid #f1f5f9
+    }
+
+    .leader-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .rank-1 {
+      background: #fef3c7;
+      color: #92400e
+    }
+
+    .rank-2 {
+      background: #f1f5f9;
+      color: #374151
+    }
+
+    .rank-3 {
+      background: #fde8d8;
+      color: #9a3412
+    }
+
+    .rank-other {
+      background: #f8fafc;
+      color: #64748b
+    }
+
+    .leader-info {
+      flex: 1
+    }
+
+    .leader-name {
+      font-size: .875rem;
+      font-weight: 600;
+      color: #1e1b4b
+    }
+
+    .leader-pts {
+      font-size: .78rem;
+      color: #64748b
+    }
+
+    .leader-badge {
+      font-size: .78rem;
+      font-weight: 700;
+      color: #4f46e5
+    }
+
+    /* PROGRESS RING */
+    .progress-ring {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .progress-ring-text {
+      position: absolute;
+      font-size: .9rem;
+      font-weight: 700;
+      color: #1e1b4b
+    }
+
+    /* NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #1e1b4b;
+      color: #fff;
+      padding: .75rem 1.25rem;
+      border-radius: 10px;
+      font-size: .875rem;
+      z-index: 9999;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      transition: all .3s;
+      max-width: 320px
+    }
+
+    .toast.success {
+      background: #065f46
+    }
+
+    .toast.error {
+      background: #991b1b
+    }
+
+    .toast.info {
+      background: #1e40af
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94a3b8
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: .75rem
+    }
+
+    .empty h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: .375rem;
+      color: #64748b
+    }
+
+    .empty p {
+      font-size: .85rem
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:640px) {
+      .sidebar {
+        width: 54px
+      }
+
+      .sidebar-logo,
+      .nav-section,
+      .sidebar-user-name,
+      .sidebar-user-role,
+      .nav-item span {
+        display: none
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: .6rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <h1>🧠 CrowdSolve</h1>
+        <p>Crowd-Powered Problem Solving Platform</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      <div id="login-form">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" />
+        </div>
+        <div id="login-error" class="error-msg hidden"></div>
+        <button class="btn btn-primary btn-full" onclick="handleLogin()" style="margin-top:.5rem">Sign In</button>
+        <p style="text-align:center;font-size:.78rem;color:#94a3b8;margin-top:.875rem">Admin: /admin log in
+         </p>
+      </div>
+      <div id="register-form" class="hidden">
+        <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="John Doe" /></div>
+        <div class="form-group"><label>Email</label><input type="email" id="reg-email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group"><label>Password</label><input type="password" id="reg-password"
+            placeholder="Min 6 characters" /></div>
+        <div class="form-group">
+          <label>Expertise</label>
+          <select id="reg-expertise">
+            <option value="">Select your expertise</option>
+            <option>Technology</option>
+            <option>Business</option>
+            <option>Science</option>
+            <option>Design</option>
+            <option>Social Issues</option>
+            <option>Environment</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div id="reg-error" class="error-msg hidden"></div>
+        <div id="reg-success" class="success-msg hidden"></div>
+        <button class="btn btn-success btn-full" onclick="handleRegister()" style="margin-top:.5rem">Create
+          Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app" class="hidden">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <h2>🧠 CrowdSolve</h2>
+        <p id="sidebar-role-label">Platform</p>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-user">
+        <div class="sidebar-user-info">
+          <div class="avatar avatar-purple" id="sidebar-avatar">U</div>
+          <div>
+            <div class="sidebar-user-name" id="sidebar-username">User</div>
+            <div class="sidebar-user-role" id="sidebar-userrole">Member</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-full" onclick="logout()"
+          style="margin-top:.625rem;font-size:.75rem">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- PAGES -->
+    <div class="main" id="main-content">
+
+      <!-- ADMIN: DASHBOARD -->
+      <div class="page" id="page-admin-dashboard">
+        <div class="page-header">
+          <h1>Admin Dashboard</h1>
+          <p>Platform overview and management</p>
+        </div>
+        <div class="stats-grid" id="admin-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Recent Problems</div>
+              </div>
+            </div>
+            <div id="admin-recent-problems"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Top Contributors</div>
+              </div>
+            </div>
+            <div id="admin-leaderboard"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: USERS -->
+      <div class="page" id="page-admin-users">
+        <div class="page-header">
+          <h1>User Management</h1>
+          <p>View and manage all registered users</p>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input type="text" id="user-search" placeholder="Search users..." oninput="renderAdminUsers()" />
+            <select id="user-filter-role" onchange="renderAdminUsers()">
+              <option value="">All Roles</option>
+              <option value="user">Users</option>
+              <option value="admin">Admins</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Expertise</th>
+                  <th>Problems</th>
+                  <th>Solutions</th>
+                  <th>Points</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: ALL PROBLEMS -->
+      <div class="page" id="page-admin-problems">
+        <div class="page-header">
+          <h1>Problem Management</h1>
+          <p>Review, approve, and manage all problems</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+            <select id="admin-prob-filter" onchange="renderAdminProblems()">
+              <option value="">All Status</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="solved">Solved</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Posted By</th>
+                  <th>Solutions</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-problems-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: ALL SOLUTIONS -->
+      <div class="page" id="page-admin-solutions">
+        <div class="page-header">
+          <h1>Solution Management</h1>
+          <p>Review all submitted solutions</p>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th>Submitted By</th>
+                  <th>Date</th>
+                  <th>Feasibility</th>
+                  <th>Creativity</th>
+                  <th>Effectiveness</th>
+                  <th>Avg Score</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-solutions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: ANALYTICS -->
+      <div class="page" id="page-admin-analytics">
+        <div class="page-header">
+          <h1>Analytics & Reports</h1>
+          <p>Platform performance metrics</p>
+        </div>
+        <div class="stats-grid" id="analytics-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">Category Distribution</div>
+            <div id="cat-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">Solution Scores Distribution</div>
+            <div id="score-chart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: DASHBOARD -->
+      <div class="page" id="page-user-dashboard">
+        <div class="page-header">
+          <h1 id="user-welcome">Welcome back!</h1>
+          <p>Your problem-solving activity overview</p>
+        </div>
+        <div class="stats-grid" id="user-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">My Recent Problems</div><button class="btn btn-primary btn-sm"
+                onclick="showPage('page-user-post')">+ New</button>
+            </div>
+            <div id="user-my-problems"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">My Solutions</div>
+            </div>
+            <div id="user-my-solutions-dash"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: BROWSE PROBLEMS -->
+      <div class="page" id="page-user-browse">
+        <div class="page-header">
+          <h1>Browse Problems</h1>
+          <p>Find problems to solve and make an impact</p>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="browse-search" placeholder="Search problems..." oninput="renderBrowse()" />
+          <select id="browse-cat" onchange="renderBrowse()">
+            <option value="">All Categories</option>
+            <option>Technology</option>
+            <option>Business</option>
+            <option>Science</option>
+            <option>Design</option>
+            <option>Social Issues</option>
+            <option>Environment</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+          <select id="browse-status" onchange="renderBrowse()">
+            <option value="">All Status</option>
+            <option value="open">Open</option>
+            <option value="in-progress">In Progress</option>
+            <option value="solved">Solved</option>
+          </select>
+        </div>
+        <div id="browse-list"></div>
+      </div>
+
+      <!-- USER: POST PROBLEM -->
+      <div class="page" id="page-user-post">
+        <div class="page-header">
+          <h1>Post a Problem</h1>
+          <p>Describe your challenge in detail</p>
+        </div>
+        <div class="card" style="max-width:640px">
+          <div class="form-group"><label>Problem Title</label><input type="text" id="prob-title"
+              placeholder="Brief, descriptive title" /></div>
+          <div class="form-group"><label>Category</label>
+            <select id="prob-cat">
+              <option value="">Select category</option>
+              <option>Technology</option>
+              <option>Business</option>
+              <option>Science</option>
+              <option>Design</option>
+              <option>Social Issues</option>
+              <option>Environment</option>
+              <option>Healthcare</option>
+              <option>Education</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Detailed Description</label><textarea id="prob-desc" rows="4"
+              placeholder="Explain the problem in detail..."></textarea></div>
+          <div class="form-group"><label>Constraints</label><textarea id="prob-constraints" rows="2"
+              placeholder="Budget, time, technical, etc."></textarea></div>
+          <div class="form-group"><label>Expected Outcome</label><textarea id="prob-outcome" rows="2"
+              placeholder="What does a successful solution look like?"></textarea></div>
+          <div class="form-group"><label>Deadline</label><input type="date" id="prob-deadline" /></div>
+          <div class="form-group"><label>Reward / Recognition</label><input type="text" id="prob-reward"
+              placeholder="e.g. 500 points, Certificate, Cash prize" /></div>
+          <div id="prob-error" class="error-msg hidden"></div>
+          <button class="btn btn-primary" onclick="submitProblem()">Post Problem</button>
+        </div>
+      </div>
+
+      <!-- USER: MY PROBLEMS -->
+      <div class="page" id="page-user-my-problems">
+        <div class="page-header">
+          <h1>My Problems</h1>
+          <p>Problems you have posted</p>
+        </div>
+        <div id="my-problems-list"></div>
+      </div>
+
+      <!-- USER: MY SOLUTIONS -->
+      <div class="page" id="page-user-my-solutions">
+        <div class="page-header">
+          <h1>My Solutions</h1>
+          <p>Solutions you have submitted</p>
+        </div>
+        <div id="my-solutions-list"></div>
+      </div>
+
+      <!-- USER: LEADERBOARD -->
+      <div class="page" id="page-user-leaderboard">
+        <div class="page-header">
+          <h1>Leaderboard</h1>
+          <p>Top contributors on the platform</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">🏆 Top Solvers</div>
+            <div id="top-solvers"></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">🚀 Top Problem Posters</div>
+            <div id="top-posters"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: PROFILE -->
+      <div class="page" id="page-user-profile">
+        <div class="page-header">
+          <h1>My Profile</h1>
+          <p>Manage your account</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">Account Info</div>
+            <div id="profile-info"></div>
+            <div style="margin-top:1rem">
+              <div class="form-group"><label>Update Name</label><input type="text" id="profile-name" /></div>
+              <div class="form-group"><label>Update Expertise</label>
+                <select id="profile-expertise">
+                  <option>Technology</option>
+                  <option>Business</option>
+                  <option>Science</option>
+                  <option>Design</option>
+                  <option>Social Issues</option>
+                  <option>Environment</option>
+                  <option>Healthcare</option>
+                  <option>Education</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="updateProfile()">Save Changes</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:1rem">Achievement Badges</div>
+            <div id="profile-badges"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROBLEM DETAIL MODAL -->
+  <div class="modal-overlay hidden" id="problem-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-prob-title">Problem Title</div>
+        <button class="modal-close" onclick="closeModal('problem-modal')">✕</button>
+      </div>
+      <div id="modal-prob-content"></div>
+    </div>
+  </div>
+
+  <!-- SUBMIT SOLUTION MODAL -->
+  <div class="modal-overlay hidden" id="solution-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Submit a Solution</div>
+        <button class="modal-close" onclick="closeModal('solution-modal')">✕</button>
+      </div>
+      <div class="form-group"><label>Your Solution</label><textarea id="sol-content" rows="5"
+          placeholder="Describe your solution in detail..."></textarea></div>
+      <div class="form-group"><label>Implementation Steps</label><textarea id="sol-steps" rows="3"
+          placeholder="Step-by-step guide..."></textarea></div>
+      <div class="form-group"><label>Resources / References</label><input type="text" id="sol-resources"
+          placeholder="Links, books, tools..." /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+        <div class="form-group"><label>Feasibility (1-10)</label><input type="number" id="sol-feasibility" min="1"
+            max="10" value="7" /></div>
+        <div class="form-group"><label>Creativity (1-10)</label><input type="number" id="sol-creativity" min="1"
+            max="10" value="7" /></div>
+        <div class="form-group"><label>Effectiveness (1-10)</label><input type="number" id="sol-effectiveness" min="1"
+            max="10" value="7" /></div>
+      </div>
+      <div id="sol-error" class="error-msg hidden"></div>
+      <input type="hidden" id="sol-problem-id" />
+      <button class="btn btn-success btn-full" onclick="submitSolution()">Submit Solution</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- FIREBASE SDKs (Compat version for Drop-in Integration without refactoring) -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBuGIrTp_qr0r47PgXSbezItPxbq_F6ooQ",
+      authDomain: "crowdsolve-a64a6.firebaseapp.com",
+      projectId: "crowdsolve-a64a6",
+      storageBucket: "crowdsolve-a64a6.firebasestorage.app",
+      messagingSenderId: "510223664048",
+      appId: "1:510223664048:web:31fa91519a9b3a5b734c75"
+    };
+    const fApp = firebase.initializeApp(firebaseConfig);
+    const fDb = firebase.firestore();
+    window.fDb = fDb;
+
+    // =================== DATA LAYER ===================
+    const DB = {
+      get(key) { try { return JSON.parse(localStorage.getItem('cs_' + key)) || null } catch { return null } },
+      set(key, val) { localStorage.setItem('cs_' + key, JSON.stringify(val)) },
+      init() {
+        if (!this.get('users')) {
+          this.set('users', [{
+            id: 'admin-1', name: 'Admin Varis', email: 'varis8321@gmail.com',
+            password: 'Varis@1234', role: 'admin', expertise: 'Platform Management',
+            points: 0, active: true, joined: new Date().toISOString(),
+            problemsPosted: 0, solutionsSubmitted: 0
+          }]);
+        }
+        if (!this.get('problems')) { this.set('problems', []); }
+        if (!this.get('solutions')) { this.set('solutions', []); }
+        if (!this.get('ratings')) { this.set('ratings', []); }
+        if (!this.get('comments')) { this.set('comments', []); }
+      },
+      getUsers() { return this.get('users') || [] },
+      getProblems() { return this.get('problems') || [] },
+      getSolutions() { return this.get('solutions') || [] },
+      saveUsers(u) {
+        this.set('users', u);
+        if (window.fDb) u.forEach(user => window.fDb.collection('users').doc(user.id).set(user));
+      },
+      saveProblems(p) {
+        this.set('problems', p);
+        if (window.fDb) p.forEach(prob => window.fDb.collection('problems').doc(prob.id).set(prob));
+      },
+      saveSolutions(s) {
+        this.set('solutions', s);
+        if (window.fDb) s.forEach(sol => window.fDb.collection('solutions').doc(sol.id).set(sol));
+      },
+      findUser(email) { return this.getUsers().find(u => u.email.toLowerCase() === email.toLowerCase()) },
+      getUserById(id) { return this.getUsers().find(u => u.id === id) },
+      getProblemById(id) { return this.getProblems().find(p => p.id === id) },
+      addSampleData() {
+        const problems = this.getProblems();
+        if (problems.length === 0) {
+          const samples = [
+            { id: 'p1', title: 'Reduce Food Waste in Urban Areas', category: 'Environment', description: 'Millions of tons of food are wasted daily in cities. We need innovative solutions to reduce food waste, connect surplus food to those in need, and create sustainable disposal methods.', constraints: 'Low-cost, scalable, tech-enabled', outcome: '30% reduction in food waste within 6 months', deadline: '2025-06-30', reward: '500 points + Certificate', status: 'open', postedBy: 'admin-1', created: new Date(Date.now() - 86400000 * 5).toISOString(), views: 24, upvotes: 12 },
+            { id: 'p2', title: 'Mental Health App for Students', category: 'Healthcare', description: 'Students face unprecedented mental health challenges. Design an accessible, stigma-free mobile application that provides mental health support, resources, and peer connection.', constraints: 'Free-to-use, accessible, data-private', outcome: 'App serving 1000+ students with measurable improvement', deadline: '2025-07-15', reward: '1000 points + Feature partnership', status: 'in-progress', postedBy: 'admin-1', created: new Date(Date.now() - 86400000 * 3).toISOString(), views: 45, upvotes: 19 },
+            { id: 'p3', title: 'Local Artisan Digital Marketplace', category: 'Business', description: 'Local artisans and craftspeople struggle to compete with large online platforms. Create a community-owned digital marketplace that fairly compensates creators and builds local economy.', constraints: 'Mobile-first, multi-language, low fees', outcome: '500 artisans onboarded, 2000 monthly transactions', deadline: '2025-08-01', reward: '750 points', status: 'open', postedBy: 'admin-1', created: new Date(Date.now() - 86400000 * 1).toISOString(), views: 18, upvotes: 8 },
+          ];
+          this.saveProblems(samples);
+        }
+      }
+    };
+
+    // =================== STATE ===================
+    let currentUser = null;
+    let currentProblemId = null;
+
+    // =================== INIT ===================
+    DB.init();
+    DB.addSampleData();
+
+    function setupFirebaseListeners() {
+      if (!window.fDb) return;
+      const reRender = () => {
+        const act = document.querySelector('.page.active');
+        if (act && window.renderPage) window.renderPage(act.id);
+      };
+
+      fDb.collection('users').onSnapshot(snap => {
+        if (!snap.empty) {
+          const arr = [];
+          snap.forEach(d => arr.push(d.data()));
+          DB.set('users', arr);
+          reRender();
+        } else {
+          (DB.get('users') || []).forEach(x => fDb.collection('users').doc(x.id).set(x));
+        }
+      });
+
+      fDb.collection('problems').onSnapshot(snap => {
+        if (!snap.empty) {
+          const arr = [];
+          snap.forEach(d => arr.push(d.data()));
+          arr.sort((a, b) => new Date(b.created) - new Date(a.created));
+          DB.set('problems', arr);
+          reRender();
+        } else {
+          (DB.get('problems') || []).forEach(x => fDb.collection('problems').doc(x.id).set(x));
+        }
+      });
+
+      fDb.collection('solutions').onSnapshot(snap => {
+        if (!snap.empty) {
+          const arr = [];
+          snap.forEach(d => arr.push(d.data()));
+          arr.sort((a, b) => new Date(a.created) - new Date(b.created));
+          DB.set('solutions', arr);
+          reRender();
+        } else {
+          (DB.get('solutions') || []).forEach(x => fDb.collection('solutions').doc(x.id).set(x));
+        }
+      });
+    }
+    setupFirebaseListeners();
+
+    function init() {
+      const saved = sessionStorage.getItem('cs_session');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        const fresh = DB.findUser(currentUser.email);
+        if (fresh && fresh.active) { currentUser = fresh; showApp(); }
+        else { showAuth(); }
+      }
+    }
+    init();
+
+    // =================== AUTH ===================
+    function switchAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1)));
+      document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('register-form').classList.toggle('hidden', tab !== 'register');
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-password').value;
+      const err = document.getElementById('login-error');
+      err.classList.add('hidden');
+      if (!email || !pass) { err.textContent = 'Please fill all fields'; err.classList.remove('hidden'); return; }
+      const user = DB.findUser(email);
+      if (!user || user.password !== pass) { err.textContent = 'Invalid email or password'; err.classList.remove('hidden'); return; }
+      if (!user.active) { err.textContent = 'Your account has been suspended'; err.classList.remove('hidden'); return; }
+      currentUser = user;
+      sessionStorage.setItem('cs_session', JSON.stringify(user));
+      showApp();
+    }
+
+    function handleRegister() {
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass = document.getElementById('reg-password').value;
+      const exp = document.getElementById('reg-expertise').value;
+      const err = document.getElementById('reg-error');
+      const suc = document.getElementById('reg-success');
+      err.classList.add('hidden'); suc.classList.add('hidden');
+      if (!name || !email || !pass || !exp) { err.textContent = 'Please fill all fields'; err.classList.remove('hidden'); return; }
+      if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters'; err.classList.remove('hidden'); return; }
+      if (DB.findUser(email)) { err.textContent = 'Email already registered'; err.classList.remove('hidden'); return; }
+      const newUser = { id: 'u' + Date.now(), name, email, password: pass, role: 'user', expertise: exp, points: 0, active: true, joined: new Date().toISOString(), problemsPosted: 0, solutionsSubmitted: 0 };
+      const users = DB.getUsers();
+      users.push(newUser);
+      DB.saveUsers(users);
+      suc.textContent = 'Account created! You can now sign in.';
+      suc.classList.remove('hidden');
+      setTimeout(() => switchAuthTab('login'), 1500);
+    }
+
+    function logout() {
+      currentUser = null;
+      sessionStorage.removeItem('cs_session');
+      showAuth();
+    }
+
+    function showAuth() { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('app').classList.add('hidden'); }
+    function showApp() { document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); setupApp(); }
+
+    // =================== SETUP APP ===================
+    function setupApp() {
+      const isAdmin = currentUser.role === 'admin';
+      document.getElementById('sidebar-avatar').textContent = currentUser.name[0].toUpperCase();
+      document.getElementById('sidebar-username').textContent = currentUser.name;
+      document.getElementById('sidebar-userrole').textContent = isAdmin ? 'Administrator' : 'Member';
+      document.getElementById('sidebar-role-label').textContent = isAdmin ? 'Admin Panel' : 'User Panel';
+
+      const nav = document.getElementById('sidebar-nav');
+      if (isAdmin) {
+        nav.innerHTML = `
+      <div class="nav-section">Admin</div>
+      <button class="nav-item active" onclick="showPage('page-admin-dashboard')" data-page="page-admin-dashboard"><span class="icon">📊</span><span>Dashboard</span></button>
+      <button class="nav-item" onclick="showPage('page-admin-users')" data-page="page-admin-users"><span class="icon">👥</span><span>Users</span></button>
+      <button class="nav-item" onclick="showPage('page-admin-problems')" data-page="page-admin-problems"><span class="icon">📋</span><span>Problems</span></button>
+      <button class="nav-item" onclick="showPage('page-admin-solutions')" data-page="page-admin-solutions"><span class="icon">💡</span><span>Solutions</span></button>
+      <button class="nav-item" onclick="showPage('page-admin-analytics')" data-page="page-admin-analytics"><span class="icon">📈</span><span>Analytics</span></button>`;
+        showPage('page-admin-dashboard');
+      } else {
+        nav.innerHTML = `
+      <div class="nav-section">Main</div>
+      <button class="nav-item active" onclick="showPage('page-user-dashboard')" data-page="page-user-dashboard"><span class="icon">🏠</span><span>Dashboard</span></button>
+      <button class="nav-item" onclick="showPage('page-user-browse')" data-page="page-user-browse"><span class="icon">🔍</span><span>Browse</span></button>
+      <div class="nav-section">My Activity</div>
+      <button class="nav-item" onclick="showPage('page-user-post')" data-page="page-user-post"><span class="icon">✏️</span><span>Post Problem</span></button>
+      <button class="nav-item" onclick="showPage('page-user-my-problems')" data-page="page-user-my-problems"><span class="icon">📌</span><span>My Problems</span></button>
+      <button class="nav-item" onclick="showPage('page-user-my-solutions')" data-page="page-user-my-solutions"><span class="icon">🛠</span><span>My Solutions</span></button>
+      <div class="nav-section">Community</div>
+      <button class="nav-item" onclick="showPage('page-user-leaderboard')" data-page="page-user-leaderboard"><span class="icon">🏆</span><span>Leaderboard</span></button>
+      <button class="nav-item" onclick="showPage('page-user-profile')" data-page="page-user-profile"><span class="icon">👤</span><span>Profile</span></button>`;
+        showPage('page-user-dashboard');
+      }
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.toggle('active', n.getAttribute('data-page') === pageId);
+      });
+      document.querySelector('.main').scrollTop = 0;
+      renderPage(pageId);
+    }
+
+    function renderPage(id) {
+      const fns = {
+        'page-admin-dashboard': renderAdminDashboard,
+        'page-admin-users': renderAdminUsers,
+        'page-admin-problems': renderAdminProblems,
+        'page-admin-solutions': renderAdminSolutions,
+        'page-admin-analytics': renderAdminAnalytics,
+        'page-user-dashboard': renderUserDashboard,
+        'page-user-browse': renderBrowse,
+        'page-user-my-problems': renderMyProblems,
+        'page-user-my-solutions': renderMySolutions,
+        'page-user-leaderboard': renderLeaderboard,
+        'page-user-profile': renderProfile,
+      };
+      if (fns[id]) fns[id]();
+    }
+
+    // =================== ADMIN PAGES ===================
+    function renderAdminDashboard() {
+      const users = DB.getUsers().filter(u => u.role !== 'admin');
+      const problems = DB.getProblems();
+      const solutions = DB.getSolutions();
+      document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-icon">👥</div><div class="stat-value">${users.length}</div><div class="stat-label">Total Users</div></div>
+    <div class="stat-card blue"><div class="stat-icon">📋</div><div class="stat-value">${problems.length}</div><div class="stat-label">Problems Posted</div></div>
+    <div class="stat-card green"><div class="stat-icon">💡</div><div class="stat-value">${solutions.length}</div><div class="stat-label">Solutions Submitted</div></div>
+    <div class="stat-card orange"><div class="stat-icon">✅</div><div class="stat-value">${problems.filter(p => p.status === 'solved').length}</div><div class="stat-label">Solved Problems</div></div>`;
+
+      const rp = document.getElementById('admin-recent-problems');
+      const recent = [...problems].sort((a, b) => new Date(b.created) - new Date(a.created)).slice(0, 4);
+      rp.innerHTML = recent.length ? recent.map(p => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f1f5f9">
+      <div><div style="font-size:.85rem;font-weight:600;color:#1e1b4b">${escHtml(p.title)}</div><div style="font-size:.75rem;color:#64748b">${p.category}</div></div>
+      <span class="badge badge-${p.status}">${p.status}</span>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">📋</div><p>No problems yet</p></div>';
+
+      const lb = document.getElementById('admin-leaderboard');
+      const ranked = DB.getUsers().filter(u => u.role !== 'admin').sort((a, b) => b.points - a.points).slice(0, 5);
+      lb.innerHTML = ranked.length ? ranked.map((u, i) => `
+    <div class="leader-item">
+      <div class="leader-rank rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div>
+      <div class="avatar avatar-purple" style="width:28px;height:28px;font-size:.7rem">${u.name[0]}</div>
+      <div class="leader-info"><div class="leader-name">${escHtml(u.name)}</div><div class="leader-pts">${u.expertise}</div></div>
+      <div class="leader-badge">${u.points} pts</div>
+    </div>`).join('') : '<div class="empty"><p>No users yet</p></div>';
+    }
+
+    function renderAdminUsers() {
+      const q = (document.getElementById('user-search') || {}).value || '';
+      const role = (document.getElementById('user-filter-role') || {}).value || '';
+      let users = DB.getUsers().filter(u => u.id !== 'admin-1');
+      if (q) users = users.filter(u => u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+      if (role) users = users.filter(u => u.role === role);
+      const tbody = document.getElementById('admin-users-tbody');
+      tbody.innerHTML = users.length ? users.map(u => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:.5rem"><div class="avatar avatar-purple" style="width:28px;height:28px;font-size:.7rem">${u.name[0]}</div><span style="font-weight:600">${escHtml(u.name)}</span></div></td>
+      <td style="color:#64748b">${escHtml(u.email)}</td>
+      <td>${u.expertise || '-'}</td>
+      <td>${DB.getProblems().filter(p => p.postedBy === u.id).length}</td>
+      <td>${DB.getSolutions().filter(s => s.submittedBy === u.id).length}</td>
+      <td><strong>${u.points}</strong></td>
+      <td><span class="badge ${u.active ? 'badge-open' : 'badge-closed'}">${u.active ? 'Active' : 'Suspended'}</span></td>
+      <td><button class="btn btn-sm ${u.active ? 'btn-danger' : 'btn-success'}" onclick="toggleUser('${u.id}')">${u.active ? 'Suspend' : 'Activate'}</button></td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:2rem">No users found</td></tr>';
+    }
+
+    function toggleUser(uid) {
+      const users = DB.getUsers();
+      const u = users.find(x => x.id === uid);
+      if (u) { u.active = !u.active; DB.saveUsers(users); renderAdminUsers(); toast(u.active ? 'User activated' : 'User suspended'); }
+    }
+
+    function renderAdminProblems() {
+      const filter = (document.getElementById('admin-prob-filter') || {}).value || '';
+      let probs = DB.getProblems();
+      if (filter) probs = probs.filter(p => p.status === filter);
+      const tbody = document.getElementById('admin-problems-tbody');
+      tbody.innerHTML = probs.length ? probs.map(p => {
+        const poster = DB.getUserById(p.postedBy);
+        const sols = DB.getSolutions().filter(s => s.problemId === p.id).length;
+        return `<tr>
+      <td><span style="font-weight:600;cursor:pointer;color:#4f46e5" onclick="openProblemModal('${p.id}')">${escHtml(p.title)}</span></td>
+      <td><span class="cat-pill">${p.category}</span></td>
+      <td>${poster ? escHtml(poster.name) : 'Unknown'}</td>
+      <td>${sols}</td>
+      <td style="color:#64748b">${p.deadline || 'No deadline'}</td>
+      <td><span class="badge badge-${p.status}">${p.status}</span></td>
+      <td style="display:flex;gap:.25rem">
+        <select onchange="updateProblemStatus('${p.id}',this.value)" style="font-size:.75rem;padding:.25rem;border:1px solid #e2e8f0;border-radius:6px">
+          <option value="">Change</option>
+          <option value="open">Open</option><option value="in-progress">In Progress</option>
+          <option value="solved">Solved</option><option value="closed">Closed</option>
+        </select>
+        <button class="btn btn-danger btn-sm" onclick="deleteProblem('${p.id}')">Del</button>
+      </td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem">No problems found</td></tr>';
+    }
+
+    function updateProblemStatus(pid, status) {
+      if (!status) return;
+      const probs = DB.getProblems();
+      const p = probs.find(x => x.id === pid);
+      if (p) { p.status = status; DB.saveProblems(probs); renderAdminProblems(); toast('Problem status updated'); }
+    }
+
+    function deleteProblem(pid) {
+      if (!confirm('Delete this problem and all its solutions?')) return;
+      DB.saveProblems(DB.getProblems().filter(p => p.id !== pid));
+      if (window.fDb) window.fDb.collection('problems').doc(pid).delete();
+      const sols = DB.getSolutions().filter(s => s.problemId === pid);
+      DB.saveSolutions(DB.getSolutions().filter(s => s.problemId !== pid));
+      if (window.fDb) sols.forEach(s => window.fDb.collection('solutions').doc(s.id).delete());
+      renderAdminProblems(); toast('Problem deleted', 'error');
+    }
+
+    function renderAdminSolutions() {
+      const solutions = DB.getSolutions();
+      const tbody = document.getElementById('admin-solutions-tbody');
+      tbody.innerHTML = solutions.length ? solutions.map(s => {
+        const prob = DB.getProblemById(s.problemId);
+        const user = DB.getUserById(s.submittedBy);
+        const avg = ((s.feasibility + s.creativity + s.effectiveness) / 3).toFixed(1);
+        return `<tr>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${prob ? escHtml(prob.title) : 'Deleted'}</td>
+      <td>${user ? escHtml(user.name) : 'Unknown'}</td>
+      <td style="color:#64748b;font-size:.8rem">${new Date(s.created).toLocaleDateString()}</td>
+      <td><div class="score-fill" style="width:${s.feasibility * 10}%;background:#6366f1;height:4px;border-radius:2px;min-width:20px"></div>${s.feasibility}/10</td>
+      <td>${s.creativity}/10</td>
+      <td>${s.effectiveness}/10</td>
+      <td><strong style="color:${avg >= 7 ? '#10b981' : avg >= 5 ? '#f59e0b' : '#ef4444'}">${avg}</strong></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteSolution('${s.id}')">Del</button></td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:2rem">No solutions yet</td></tr>';
+    }
+
+    function deleteSolution(sid) {
+      if (!confirm('Delete this solution?')) return;
+      DB.saveSolutions(DB.getSolutions().filter(s => s.id !== sid));
+      if (window.fDb) window.fDb.collection('solutions').doc(sid).delete();
+      renderAdminSolutions(); toast('Solution deleted', 'error');
+    }
+
+    function renderAdminAnalytics() {
+      const probs = DB.getProblems(), sols = DB.getSolutions(), users = DB.getUsers().filter(u => u.role !== 'admin');
+      const solved = probs.filter(p => p.status === 'solved').length;
+      const rate = probs.length ? Math.round(solved / probs.length * 100) : 0;
+      document.getElementById('analytics-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-icon">🎯</div><div class="stat-value">${rate}%</div><div class="stat-label">Resolution Rate</div></div>
+    <div class="stat-card blue"><div class="stat-icon">📊</div><div class="stat-value">${probs.length ? Math.round(probs.reduce((a, p) => a + (p.views || 0), 0) / probs.length) : 0}</div><div class="stat-label">Avg Views/Problem</div></div>
+    <div class="stat-card green"><div class="stat-icon">💬</div><div class="stat-value">${probs.length ? Math.round(sols.length / Math.max(probs.length, 1) * 10) / 10 : 0}</div><div class="stat-label">Avg Solutions/Problem</div></div>
+    <div class="stat-card orange"><div class="stat-icon">🌟</div><div class="stat-value">${users.reduce((a, u) => a + u.points, 0)}</div><div class="stat-label">Total Points Earned</div></div>`;
+
+      const cats = {};
+      probs.forEach(p => { cats[p.category] = (cats[p.category] || 0) + 1; });
+      const colors = ['#6366f1', '#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
+      let catHtml = Object.entries(cats).map(([cat, cnt], i) => `
+    <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:.5rem">
+      <div style="width:10px;height:10px;border-radius:50%;background:${colors[i % colors.length]};flex-shrink:0"></div>
+      <div style="flex:1;font-size:.82rem">${cat}</div>
+      <div style="width:80px;height:6px;background:#f1f5f9;border-radius:3px"><div style="width:${Math.round(cnt / probs.length * 100)}%;height:100%;background:${colors[i % colors.length]};border-radius:3px"></div></div>
+      <div style="font-size:.78rem;font-weight:600;width:24px;text-align:right">${cnt}</div>
+    </div>`).join('');
+      document.getElementById('cat-chart').innerHTML = catHtml || '<div class="empty"><p>No data</p></div>';
+
+      const buckets = { '1-3': 0, '4-6': 0, '7-10': 0 };
+      sols.forEach(s => { const avg = (s.feasibility + s.creativity + s.effectiveness) / 3; if (avg < 4) buckets['1-3']++; else if (avg < 7) buckets['4-6']++; else buckets['7-10']++; });
+      const total = sols.length || 1;
+      document.getElementById('score-chart').innerHTML = Object.entries(buckets).map(([range, cnt]) => `
+    <div style="margin-bottom:.875rem">
+      <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.3rem"><span>Score ${range}</span><span style="font-weight:600">${cnt}</span></div>
+      <div style="height:8px;background:#f1f5f9;border-radius:4px"><div style="width:${Math.round(cnt / total * 100)}%;height:100%;background:#6366f1;border-radius:4px;transition:width .5s"></div></div>
+    </div>`).join('') || '<div class="empty"><p>No solutions yet</p></div>';
+    }
+
+    // =================== USER PAGES ===================
+    function renderUserDashboard() {
+      document.getElementById('user-welcome').textContent = `Welcome back, ${currentUser.name.split(' ')[0]}!`;
+      const myProbs = DB.getProblems().filter(p => p.postedBy === currentUser.id);
+      const mySols = DB.getSolutions().filter(s => s.submittedBy === currentUser.id);
+      document.getElementById('user-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-icon">🏆</div><div class="stat-value">${currentUser.points}</div><div class="stat-label">Total Points</div></div>
+    <div class="stat-card blue"><div class="stat-icon">📋</div><div class="stat-value">${myProbs.length}</div><div class="stat-label">Problems Posted</div></div>
+    <div class="stat-card green"><div class="stat-icon">💡</div><div class="stat-value">${mySols.length}</div><div class="stat-label">Solutions Submitted</div></div>
+    <div class="stat-card orange"><div class="stat-icon">📊</div><div class="stat-value">${mySols.length ? (mySols.reduce((a, s) => a + (s.feasibility + s.creativity + s.effectiveness) / 3, 0) / mySols.length).toFixed(1) : '—'}</div><div class="stat-label">Avg Solution Score</div></div>`;
+
+      const mp = document.getElementById('user-my-problems');
+      mp.innerHTML = myProbs.length ? myProbs.slice(0, 3).map(p => `
+    <div style="padding:.5rem 0;border-bottom:1px solid #f1f5f9;cursor:pointer" onclick="openProblemModal('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:.875rem;font-weight:600;color:#1e1b4b">${escHtml(p.title)}</div>
+        <span class="badge badge-${p.status}">${p.status}</span>
+      </div>
+      <div style="font-size:.75rem;color:#64748b;margin-top:.2rem">${DB.getSolutions().filter(s => s.problemId === p.id).length} solutions</div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">📋</div><h3>No problems posted</h3><p>Share a challenge with the community</p></div>';
+
+      const ms = document.getElementById('user-my-solutions-dash');
+      ms.innerHTML = mySols.length ? mySols.slice(0, 3).map(s => {
+        const prob = DB.getProblemById(s.problemId);
+        return `<div style="padding:.5rem 0;border-bottom:1px solid #f1f5f9">
+      <div style="font-size:.875rem;font-weight:600;color:#1e1b4b">${prob ? escHtml(prob.title) : 'Deleted Problem'}</div>
+      <div style="font-size:.75rem;color:#64748b;margin-top:.2rem">Score: ${((s.feasibility + s.creativity + s.effectiveness) / 3).toFixed(1)}/10</div>
+    </div>`;
+      }).join('') : '<div class="empty"><div class="empty-icon">💡</div><h3>No solutions yet</h3><p>Browse problems and contribute</p></div>';
+    }
+
+    function renderBrowse() {
+      const q = (document.getElementById('browse-search') || {}).value || '';
+      const cat = (document.getElementById('browse-cat') || {}).value || '';
+      const status = (document.getElementById('browse-status') || {}).value || '';
+      let probs = DB.getProblems();
+      if (q) probs = probs.filter(p => p.title.toLowerCase().includes(q.toLowerCase()) || p.description.toLowerCase().includes(q.toLowerCase()));
+      if (cat) probs = probs.filter(p => p.category === cat);
+      if (status) probs = probs.filter(p => p.status === status);
+      probs.sort((a, b) => new Date(b.created) - new Date(a.created));
+      const list = document.getElementById('browse-list');
+      list.innerHTML = probs.length ? probs.map(p => {
+        const poster = DB.getUserById(p.postedBy);
+        const sols = DB.getSolutions().filter(s => s.problemId === p.id).length;
+        return `<div class="problem-card" onclick="openProblemModal('${p.id}')">
+      <div class="problem-meta">
+        <span class="badge badge-${p.status}">${p.status}</span>
+        <span class="cat-pill">${p.category}</span>
+        ${p.deadline ? `<span style="font-size:.75rem;color:#64748b">📅 ${p.deadline}</span>` : ''}
+        ${p.reward ? `<span style="font-size:.75rem;color:#10b981">🎁 ${escHtml(p.reward)}</span>` : ''}
+      </div>
+      <div class="problem-title">${escHtml(p.title)}</div>
+      <div class="problem-desc">${escHtml(p.description)}</div>
+      <div class="problem-footer">
+        <div class="problem-stats">
+          <span class="problem-stat">👁 ${p.views || 0} views</span>
+          <span class="problem-stat">💡 ${sols} solutions</span>
+          <span class="problem-stat">👍 ${p.upvotes || 0}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="avatar avatar-purple" style="width:22px;height:22px;font-size:.65rem">${poster ? poster.name[0] : '?'}</div>
+          <span style="font-size:.78rem;color:#64748b">${poster ? escHtml(poster.name) : 'Unknown'}</span>
+        </div>
+      </div>
+    </div>`;
+      }).join('') : '<div class="empty"><div class="empty-icon">🔍</div><h3>No problems found</h3><p>Try adjusting your filters</p></div>';
+    }
+
+    function renderMyProblems() {
+      const probs = DB.getProblems().filter(p => p.postedBy === currentUser.id);
+      document.getElementById('my-problems-list').innerHTML = probs.length ? probs.map(p => {
+        const sols = DB.getSolutions().filter(s => s.problemId === p.id).length;
+        return `<div class="problem-card" onclick="openProblemModal('${p.id}')">
+      <div class="problem-meta"><span class="badge badge-${p.status}">${p.status}</span><span class="cat-pill">${p.category}</span></div>
+      <div class="problem-title">${escHtml(p.title)}</div>
+      <div class="problem-desc">${escHtml(p.description)}</div>
+      <div class="problem-footer">
+        <div class="problem-stats"><span class="problem-stat">💡 ${sols} solutions</span><span class="problem-stat">👁 ${p.views || 0} views</span></div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editProblemStatus('${p.id}')">Update Status</button>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMyProblem('${p.id}')">Delete</button>
+        </div>
+      </div>
+    </div>`;
+      }).join('') : '<div class="empty"><div class="empty-icon">📋</div><h3>No problems posted yet</h3><p><button class="btn btn-primary btn-sm" onclick="showPage(\'page-user-post\')">Post your first problem</button></p></div>';
+    }
+
+    function editProblemStatus(pid) {
+      const probs = DB.getProblems();
+      const p = probs.find(x => x.id === pid);
+      if (!p) return;
+      const s = prompt('New status (open / in-progress / solved / closed):', p.status);
+      if (s && ['open', 'in-progress', 'solved', 'closed'].includes(s)) { p.status = s; DB.saveProblems(probs); renderMyProblems(); toast('Status updated'); }
+    }
+
+    function deleteMyProblem(pid) {
+      if (!confirm('Delete this problem?')) return;
+      DB.saveProblems(DB.getProblems().filter(p => p.id !== pid));
+      if (window.fDb) window.fDb.collection('problems').doc(pid).delete();
+      const sols = DB.getSolutions().filter(s => s.problemId === pid);
+      DB.saveSolutions(DB.getSolutions().filter(s => s.problemId !== pid));
+      if (window.fDb) sols.forEach(s => window.fDb.collection('solutions').doc(s.id).delete());
+      renderMyProblems(); toast('Problem deleted', 'error');
+    }
+
+    function renderMySolutions() {
+      const sols = DB.getSolutions().filter(s => s.submittedBy === currentUser.id);
+      document.getElementById('my-solutions-list').innerHTML = sols.length ? sols.map(s => {
+        const prob = DB.getProblemById(s.problemId);
+        const avg = ((s.feasibility + s.creativity + s.effectiveness) / 3).toFixed(1);
+        return `<div class="card">
+      <div class="card-header">
+        <div><div class="card-title">${prob ? escHtml(prob.title) : 'Deleted Problem'}</div><div class="card-subtitle">${new Date(s.created).toLocaleDateString()}</div></div>
+        <div style="text-align:right"><div style="font-size:1.3rem;font-weight:700;color:${avg >= 7 ? '#10b981' : avg >= 5 ? '#f59e0b' : '#ef4444'}">${avg}/10</div><div style="font-size:.75rem;color:#64748b">Avg Score</div></div>
+      </div>
+      <p style="font-size:.875rem;color:#374151;line-height:1.65;margin-bottom:.875rem">${escHtml(s.content)}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+        ${scoreBar('Feasibility', s.feasibility)}${scoreBar('Creativity', s.creativity)}${scoreBar('Effectiveness', s.effectiveness)}
+      </div>
+    </div>`;
+      }).join('') : '<div class="empty"><div class="empty-icon">💡</div><h3>No solutions submitted yet</h3><p><button class="btn btn-primary btn-sm" onclick="showPage(\'page-user-browse\')">Browse problems</button></p></div>';
+    }
+
+    function scoreBar(label, val) {
+      return `<div><div style="font-size:.75rem;color:#64748b;margin-bottom:.25rem">${label}</div>
+    <div style="height:6px;background:#f1f5f9;border-radius:3px"><div style="width:${val * 10}%;height:100%;background:#6366f1;border-radius:3px"></div></div>
+    <div style="font-size:.78rem;font-weight:600;margin-top:.2rem">${val}/10</div></div>`;
+    }
+
+    function renderLeaderboard() {
+      const users = DB.getUsers().filter(u => u.role !== 'admin').sort((a, b) => b.points - a.points);
+      const solvers = [...users].sort((a, b) => {
+        const sa = DB.getSolutions().filter(s => s.submittedBy === a.id).length;
+        const sb = DB.getSolutions().filter(s => s.submittedBy === b.id).length;
+        return sb - sa;
+      });
+      const posters = [...users].sort((a, b) => {
+        const pa = DB.getProblems().filter(p => p.postedBy === a.id).length;
+        const pb = DB.getProblems().filter(p => p.postedBy === b.id).length;
+        return pb - pa;
+      });
+
+      const lbHtml = (arr, type) => arr.slice(0, 8).map((u, i) => {
+        const count = type === 'solver' ? DB.getSolutions().filter(s => s.submittedBy === u.id).length : DB.getProblems().filter(p => p.postedBy === u.id).length;
+        return `<div class="leader-item">
+      <div class="leader-rank rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div>
+      <div class="avatar avatar-${i === 0 ? 'orange' : i === 1 ? 'blue' : 'green'}" style="width:30px;height:30px;font-size:.75rem">${u.name[0]}</div>
+      <div class="leader-info"><div class="leader-name">${escHtml(u.name)}</div><div class="leader-pts">${u.expertise} · ${count} ${type === 'solver' ? 'solutions' : 'problems'}</div></div>
+      <div class="leader-badge">${u.points} pts</div>
+    </div>`;
+      }).join('');
+
+      document.getElementById('top-solvers').innerHTML = solvers.length ? lbHtml(solvers, 'solver') : '<div class="empty"><p>No solvers yet</p></div>';
+      document.getElementById('top-posters').innerHTML = posters.length ? lbHtml(posters, 'poster') : '<div class="empty"><p>No posters yet</p></div>';
+    }
+
+    function renderProfile() {
+      const u = currentUser;
+      const myProbs = DB.getProblems().filter(p => p.postedBy === u.id).length;
+      const mySols = DB.getSolutions().filter(s => s.submittedBy === u.id).length;
+      document.getElementById('profile-info').innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+      <div class="avatar avatar-purple" style="width:56px;height:56px;font-size:1.2rem">${u.name[0]}</div>
+      <div>
+        <div style="font-size:1rem;font-weight:700">${escHtml(u.name)}</div>
+        <div style="font-size:.85rem;color:#64748b">${u.email}</div>
+        <div style="font-size:.8rem;color:#64748b;margin-top:.2rem">Joined ${new Date(u.joined).toLocaleDateString()}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem">
+      <div style="background:#f8fafc;border-radius:8px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;font-weight:700;color:#4f46e5">${u.points}</div><div style="font-size:.75rem;color:#64748b">Points</div></div>
+      <div style="background:#f8fafc;border-radius:8px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;font-weight:700;color:#10b981">${myProbs}</div><div style="font-size:.75rem;color:#64748b">Problems</div></div>
+      <div style="background:#f8fafc;border-radius:8px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;font-weight:700;color:#3b82f6">${mySols}</div><div style="font-size:.75rem;color:#64748b">Solutions</div></div>
+      <div style="background:#f8fafc;border-radius:8px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;font-weight:700;color:#f59e0b">${u.expertise || '—'}</div><div style="font-size:.75rem;color:#64748b">Expertise</div></div>
+    </div>`;
+      document.getElementById('profile-name').value = u.name;
+      const sel = document.getElementById('profile-expertise');
+      if (sel) { Array.from(sel.options).forEach(o => o.selected = o.value === u.expertise); }
+
+      const badges = [];
+      if (mySols >= 1) badges.push(['🌱', 'First Solution', 'Submitted your first solution']);
+      if (mySols >= 5) badges.push(['⚡', 'Active Solver', 'Submitted 5+ solutions']);
+      if (mySols >= 10) badges.push(['🚀', 'Super Solver', 'Submitted 10+ solutions']);
+      if (myProbs >= 1) badges.push(['📌', 'Problem Poster', 'Posted your first problem']);
+      if (u.points >= 100) badges.push(['💎', 'Diamond', 'Earned 100+ points']);
+      if (u.points >= 500) badges.push(['👑', 'Champion', 'Earned 500+ points']);
+      document.getElementById('profile-badges').innerHTML = badges.length ? badges.map(([icon, name, desc]) => `
+    <div style="display:flex;align-items:center;gap:.75rem;padding:.625rem 0;border-bottom:1px solid #f1f5f9">
+      <div style="font-size:1.5rem;width:36px;text-align:center">${icon}</div>
+      <div><div style="font-size:.875rem;font-weight:600">${name}</div><div style="font-size:.78rem;color:#64748b">${desc}</div></div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">🏅</div><h3>No badges yet</h3><p>Submit solutions and post problems to earn badges</p></div>';
+    }
+
+    function updateProfile() {
+      const name = document.getElementById('profile-name').value.trim();
+      const exp = document.getElementById('profile-expertise').value;
+      if (!name) { toast('Name cannot be empty', 'error'); return; }
+      const users = DB.getUsers();
+      const u = users.find(x => x.id === currentUser.id);
+      if (u) { u.name = name; u.expertise = exp; DB.saveUsers(users); currentUser = u; sessionStorage.setItem('cs_session', JSON.stringify(u)); }
+      document.getElementById('sidebar-username').textContent = name;
+      document.getElementById('sidebar-avatar').textContent = name[0];
+      renderProfile(); toast('Profile updated!', 'success');
+    }
+
+    // =================== PROBLEM MODAL ===================
+    function openProblemModal(pid) {
+      const p = DB.getProblemById(pid);
+      if (!p) return;
+      currentProblemId = pid;
+      const probs = DB.getProblems();
+      const pi = probs.findIndex(x => x.id === pid);
+      if (pi >= 0) { probs[pi].views = (probs[pi].views || 0) + 1; DB.saveProblems(probs); }
+
+      document.getElementById('modal-prob-title').textContent = p.title;
+      const poster = DB.getUserById(p.postedBy);
+      const solutions = DB.getSolutions().filter(s => s.problemId === pid).sort((a, b) => {
+        const sa = (a.feasibility + a.creativity + a.effectiveness) / 3, sb = (b.feasibility + b.creativity + b.effectiveness) / 3;
+        return sb - sa;
+      });
+
+      const canSubmit = currentUser.role === 'user' && p.status !== 'solved' && p.status !== 'closed' && p.postedBy !== currentUser.id;
+      const alreadySubmitted = solutions.some(s => s.submittedBy === currentUser.id);
+
+      document.getElementById('modal-prob-content').innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
+      <span class="badge badge-${p.status}">${p.status}</span>
+      <span class="cat-pill">${p.category}</span>
+      ${p.deadline ? `<span style="font-size:.8rem;color:#64748b;display:flex;align-items:center;gap:.3rem">📅 ${p.deadline}</span>` : ''}
+      ${p.reward ? `<span style="font-size:.8rem;color:#10b981;display:flex;align-items:center;gap:.3rem">🎁 ${escHtml(p.reward)}</span>` : ''}
+    </div>
+    <div style="background:#f8fafc;border-radius:10px;padding:1rem;margin-bottom:1rem">
+      <p style="font-size:.9rem;line-height:1.7;color:#374151">${escHtml(p.description)}</p>
+    </div>
+    ${p.constraints ? `<div style="margin-bottom:.875rem"><div style="font-size:.78rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.375rem">Constraints</div><p style="font-size:.875rem;color:#475569">${escHtml(p.constraints)}</p></div>` : ''}
+    ${p.outcome ? `<div style="margin-bottom:.875rem"><div style="font-size:.78rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.375rem">Expected Outcome</div><p style="font-size:.875rem;color:#475569">${escHtml(p.outcome)}</p></div>` : ''}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-top:1px solid #f1f5f9;margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <div class="avatar avatar-purple" style="width:26px;height:26px;font-size:.7rem">${poster ? poster.name[0] : '?'}</div>
+        <span style="font-size:.85rem;color:#374151">${poster ? escHtml(poster.name) : 'Unknown'}</span>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <span style="font-size:.8rem;color:#64748b">👁 ${p.views || 0}</span>
+        <span style="font-size:.8rem;color:#64748b">💡 ${solutions.length} solutions</span>
+        <button style="background:none;border:none;cursor:pointer;font-size:.85rem;color:#64748b" onclick="upvoteProblem('${pid}')">👍 ${p.upvotes || 0}</button>
+      </div>
+    </div>
+    
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+      <div style="font-size:.95rem;font-weight:700;color:#1e1b4b">Solutions (${solutions.length})</div>
+      ${canSubmit && !alreadySubmitted ? `<button class="btn btn-success btn-sm" onclick="openSolutionModal('${pid}')">+ Submit Solution</button>` : ''}
+      ${alreadySubmitted ? `<span style="font-size:.8rem;color:#10b981;font-weight:600">✅ You submitted a solution</span>` : ''}
+      ${!canSubmit && currentUser.role === 'admin' ? '<span style="font-size:.78rem;color:#94a3b8">Admin view</span>' : ''}
+      ${p.postedBy === currentUser.id ? '<span style="font-size:.78rem;color:#94a3b8">Your problem</span>' : ''}
+    </div>
+    ${solutions.length ? solutions.map((s, i) => {
+        const solver = DB.getUserById(s.submittedBy);
+        const avg = ((s.feasibility + s.creativity + s.effectiveness) / 3).toFixed(1);
+        return `<div class="solution-card ${i === 0 ? 'border-2' : ''}">
+        <div class="solution-header">
+          <div class="solution-author">
+            ${i === 0 ? '<span style="font-size:.85rem;margin-right:.3rem">🥇</span>' : ''}
+            <div class="avatar avatar-green" style="width:24px;height:24px;font-size:.65rem">${solver ? solver.name[0] : '?'}</div>
+            <span style="font-size:.82rem;font-weight:600">${solver ? escHtml(solver.name) : 'Unknown'}</span>
+            <span style="font-size:.75rem;color:#94a3b8">${new Date(s.created).toLocaleDateString()}</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1rem;font-weight:700;color:${avg >= 7 ? '#10b981' : avg >= 5 ? '#f59e0b' : '#ef4444'}">${avg}/10</div>
+          </div>
+        </div>
+        <div class="solution-content">${escHtml(s.content)}</div>
+        ${s.steps ? `<div style="margin-top:.5rem;font-size:.82rem;color:#64748b"><strong>Steps:</strong> ${escHtml(s.steps)}</div>` : ''}
+        ${s.resources ? `<div style="margin-top:.3rem;font-size:.78rem;color:#6366f1">📎 ${escHtml(s.resources)}</div>` : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.625rem">
+          <div><div style="font-size:.7rem;color:#94a3b8">Feasibility</div><div style="height:4px;background:#f1f5f9;border-radius:2px;margin:.2rem 0"><div style="width:${s.feasibility * 10}%;height:100%;background:#6366f1;border-radius:2px"></div></div><div style="font-size:.75rem;font-weight:600">${s.feasibility}/10</div></div>
+          <div><div style="font-size:.7rem;color:#94a3b8">Creativity</div><div style="height:4px;background:#f1f5f9;border-radius:2px;margin:.2rem 0"><div style="width:${s.creativity * 10}%;height:100%;background:#10b981;border-radius:2px"></div></div><div style="font-size:.75rem;font-weight:600">${s.creativity}/10</div></div>
+          <div><div style="font-size:.7rem;color:#94a3b8">Effectiveness</div><div style="height:4px;background:#f1f5f9;border-radius:2px;margin:.2rem 0"><div style="width:${s.effectiveness * 10}%;height:100%;background:#f59e0b;border-radius:2px"></div></div><div style="font-size:.75rem;font-weight:600">${s.effectiveness}/10</div></div>
+        </div>
+      </div>`;
+      }).join('') : `<div class="empty"><div class="empty-icon">💡</div><h3>No solutions yet</h3><p>Be the first to propose a solution!</p></div>`}`;
+
+      document.getElementById('problem-modal').classList.remove('hidden');
+    }
+
+    function upvoteProblem(pid) {
+      const probs = DB.getProblems();
+      const p = probs.find(x => x.id === pid);
+      if (p) { p.upvotes = (p.upvotes || 0) + 1; DB.saveProblems(probs); openProblemModal(pid); }
+    }
+
+    function openSolutionModal(pid) {
+      currentProblemId = pid;
+      document.getElementById('sol-problem-id').value = pid;
+      document.getElementById('sol-content').value = '';
+      document.getElementById('sol-steps').value = '';
+      document.getElementById('sol-resources').value = '';
+      document.getElementById('sol-feasibility').value = 7;
+      document.getElementById('sol-creativity').value = 7;
+      document.getElementById('sol-effectiveness').value = 7;
+      document.getElementById('sol-error').classList.add('hidden');
+      document.getElementById('problem-modal').classList.add('hidden');
+      document.getElementById('solution-modal').classList.remove('hidden');
+    }
+
+    function submitSolution() {
+      const content = document.getElementById('sol-content').value.trim();
+      const pid = document.getElementById('sol-problem-id').value;
+      const err = document.getElementById('sol-error');
+      err.classList.add('hidden');
+      if (!content) { err.textContent = 'Solution content is required'; err.classList.remove('hidden'); return; }
+      const feasibility = parseInt(document.getElementById('sol-feasibility').value);
+      const creativity = parseInt(document.getElementById('sol-creativity').value);
+      const effectiveness = parseInt(document.getElementById('sol-effectiveness').value);
+      const sol = {
+        id: 's' + Date.now(), problemId: pid, submittedBy: currentUser.id,
+        content, steps: document.getElementById('sol-steps').value.trim(),
+        resources: document.getElementById('sol-resources').value.trim(),
+        feasibility, creativity, effectiveness, created: new Date().toISOString()
+      };
+      const sols = DB.getSolutions();
+      sols.push(sol);
+      DB.saveSolutions(sols);
+      const users = DB.getUsers();
+      const u = users.find(x => x.id === currentUser.id);
+      if (u) { u.points = (u.points || 0) + 50; u.solutionsSubmitted = (u.solutionsSubmitted || 0) + 1; DB.saveUsers(users); currentUser = u; sessionStorage.setItem('cs_session', JSON.stringify(u)); }
+      closeModal('solution-modal');
+      toast('Solution submitted! +50 points 🎉', 'success');
+      const probs = DB.getProblems();
+      const p = probs.find(x => x.id === pid);
+      if (p && p.status === 'open') { p.status = 'in-progress'; DB.saveProblems(probs); }
+      setTimeout(() => openProblemModal(pid), 300);
+    }
+
+    function submitProblem() {
+      const title = document.getElementById('prob-title').value.trim();
+      const cat = document.getElementById('prob-cat').value;
+      const desc = document.getElementById('prob-desc').value.trim();
+      const err = document.getElementById('prob-error');
+      err.classList.add('hidden');
+      if (!title || !cat || !desc) { err.textContent = 'Title, category, and description are required'; err.classList.remove('hidden'); return; }
+      const p = {
+        id: 'p' + Date.now(), title, category: cat, description: desc,
+        constraints: document.getElementById('prob-constraints').value.trim(),
+        outcome: document.getElementById('prob-outcome').value.trim(),
+        deadline: document.getElementById('prob-deadline').value,
+        reward: document.getElementById('prob-reward').value.trim(),
+        status: 'open', postedBy: currentUser.id, created: new Date().toISOString(), views: 0, upvotes: 0
+      };
+      const probs = DB.getProblems();
+      probs.push(p);
+      DB.saveProblems(probs);
+      const users = DB.getUsers();
+      const u = users.find(x => x.id === currentUser.id);
+      if (u) { u.points = (u.points || 0) + 20; u.problemsPosted = (u.problemsPosted || 0) + 1; DB.saveUsers(users); currentUser = u; sessionStorage.setItem('cs_session', JSON.stringify(u)); }
+      ['prob-title', 'prob-desc', 'prob-constraints', 'prob-outcome', 'prob-deadline', 'prob-reward'].forEach(id => { document.getElementById(id).value = ''; });
+      document.getElementById('prob-cat').value = '';
+      toast('Problem posted! +20 points 🎉', 'success');
+      showPage('page-user-my-problems');
+    }
+
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function toast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + type;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Close modals on overlay click
+    ['problem-modal', 'solution-modal'].forEach(id => {
+      document.getElementById(id).addEventListener('click', function (e) { if (e.target === this) closeModal(id); });
+    });
+  </script>
+</body>
+
+</html>
