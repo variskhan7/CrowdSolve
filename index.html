@@ -978,6 +978,140 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* CHATBOT */
+    .chatbot-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #25D366;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      transition: transform 0.2s;
+    }
+
+    .chatbot-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .chatbot-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      height: 50vh;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chatbot-container.active {
+      display: flex;
+    }
+
+    .chatbot-header {
+      background: #1e1b4b;
+      color: #fff;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chatbot-header h3 {
+      font-size: 1rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chatbot-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .chatbot-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f8fafc;
+    }
+
+    .chat-msg {
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .chat-msg.user {
+      background: #6366f1;
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-msg.bot {
+      background: #e2e8f0;
+      color: #1e1b4b;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chatbot-input {
+      display: flex;
+      padding: 10px;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    .chatbot-input button {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin-left: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 
 <body>
@@ -1005,7 +1139,7 @@
         <div id="login-error" class="error-msg hidden"></div>
         <button class="btn btn-primary btn-full" onclick="handleLogin()" style="margin-top:.5rem">Sign In</button>
         <p style="text-align:center;font-size:.78rem;color:#94a3b8;margin-top:.875rem">Admin: /admin log in
-         </p>
+        </p>
       </div>
       <div id="register-form" class="hidden">
         <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="John Doe" /></div>
@@ -2016,13 +2150,13 @@
     }
 
     // =================== PROBLEM MODAL ===================
-    function openProblemModal(pid) {
+    function openProblemModal(pid, skipViewIncrement = false) {
       const p = DB.getProblemById(pid);
       if (!p) return;
       currentProblemId = pid;
       const probs = DB.getProblems();
       const pi = probs.findIndex(x => x.id === pid);
-      if (pi >= 0) { probs[pi].views = (probs[pi].views || 0) + 1; DB.saveProblems(probs); }
+      if (pi >= 0 && !skipViewIncrement) { probs[pi].views = (probs[pi].views || 0) + 1; DB.saveProblems(probs); }
 
       document.getElementById('modal-prob-title').textContent = p.title;
       const poster = DB.getUserById(p.postedBy);
@@ -2033,6 +2167,7 @@
 
       const canSubmit = currentUser.role === 'user' && p.status !== 'solved' && p.status !== 'closed' && p.postedBy !== currentUser.id;
       const alreadySubmitted = solutions.some(s => s.submittedBy === currentUser.id);
+      const alreadyUpvoted = p.upvotedBy && p.upvotedBy.includes(currentUser.id);
 
       document.getElementById('modal-prob-content').innerHTML = `
     <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">
@@ -2054,7 +2189,7 @@
       <div style="display:flex;gap:.75rem">
         <span style="font-size:.8rem;color:#64748b">👁 ${p.views || 0}</span>
         <span style="font-size:.8rem;color:#64748b">💡 ${solutions.length} solutions</span>
-        <button style="background:none;border:none;cursor:pointer;font-size:.85rem;color:#64748b" onclick="upvoteProblem('${pid}')">👍 ${p.upvotes || 0}</button>
+        <button style="background:none;border:none;cursor:pointer;font-size:.85rem;color:${alreadyUpvoted ? '#4f46e5' : '#64748b'};font-weight:${alreadyUpvoted ? 'bold' : 'normal'}" onclick="upvoteProblem('${pid}')">👍 ${p.upvotes || 0}</button>
       </div>
     </div>
     
@@ -2088,6 +2223,18 @@
           <div><div style="font-size:.7rem;color:#94a3b8">Creativity</div><div style="height:4px;background:#f1f5f9;border-radius:2px;margin:.2rem 0"><div style="width:${s.creativity * 10}%;height:100%;background:#10b981;border-radius:2px"></div></div><div style="font-size:.75rem;font-weight:600">${s.creativity}/10</div></div>
           <div><div style="font-size:.7rem;color:#94a3b8">Effectiveness</div><div style="height:4px;background:#f1f5f9;border-radius:2px;margin:.2rem 0"><div style="width:${s.effectiveness * 10}%;height:100%;background:#f59e0b;border-radius:2px"></div></div><div style="font-size:.75rem;font-weight:600">${s.effectiveness}/10</div></div>
         </div>
+        <div style="margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: .75rem;">
+          <div style="font-size: .85rem; font-weight: 600; margin-bottom: .5rem; color:#1e1b4b;">Replies</div>
+          <div id="replies-list-${s.id}">
+             ${renderRepliesHtml(s.replies || [])}
+          </div>
+          ${currentUser ? `
+          <div style="display:flex; gap: .5rem; margin-top: .5rem;">
+             <input type="text" id="reply-input-${s.id}" placeholder="Write a reply..." style="flex:1; padding: .5rem .75rem; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: .85rem; outline: none;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e2e8f0'">
+             <button class="btn btn-primary btn-sm" onclick="submitReply('${s.id}', '${pid}')">Reply</button>
+          </div>
+          ` : ''}
+        </div>
       </div>`;
       }).join('') : `<div class="empty"><div class="empty-icon">💡</div><h3>No solutions yet</h3><p>Be the first to propose a solution!</p></div>`}`;
 
@@ -2095,9 +2242,62 @@
     }
 
     function upvoteProblem(pid) {
+      if (!currentUser) return;
       const probs = DB.getProblems();
       const p = probs.find(x => x.id === pid);
-      if (p) { p.upvotes = (p.upvotes || 0) + 1; DB.saveProblems(probs); openProblemModal(pid); }
+      if (p) {
+        if (!p.upvotedBy) p.upvotedBy = [];
+        const index = p.upvotedBy.indexOf(currentUser.id);
+        if (index === -1) {
+          p.upvotedBy.push(currentUser.id);
+          p.upvotes = (p.upvotes || 0) + 1;
+        } else {
+          p.upvotedBy.splice(index, 1);
+          p.upvotes = Math.max(0, (p.upvotes || 0) - 1);
+        }
+        DB.saveProblems(probs);
+        openProblemModal(pid, true);
+      }
+    }
+
+    function renderRepliesHtml(replies) {
+      if (!replies || !replies.length) return '<div style="font-size:.8rem; color:#94a3b8; margin-bottom:.5rem">No replies yet. Be the first to reply!</div>';
+      return replies.map(r => {
+        const author = DB.getUserById(r.authorId);
+        return `
+        <div style="background:#fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: .625rem; margin-bottom: .5rem; font-size: .85rem;">
+           <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: .375rem;">
+               <div style="display:flex; align-items: center; gap: .5rem">
+                   <div class="avatar avatar-${author && author.role === 'admin' ? 'blue' : 'purple'}" style="width:22px;height:22px;font-size:.65rem">${author ? author.name[0] : '?'}</div>
+                   <span style="font-weight: 600; color: #1e1b4b">${author ? escHtml(author.name) : 'Unknown'}</span>
+                   ${author && author.role === 'admin' ? '<span class="badge badge-admin" style="font-size: .6rem; padding: .1rem .4rem;">Admin</span>' : ''}
+               </div>
+               <span style="color: #64748b; font-size: .75rem">${new Date(r.created).toLocaleDateString()}</span>
+           </div>
+           <div style="color: #475569; margin-left: 1.8rem; line-height: 1.5;">${escHtml(r.content)}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function submitReply(sid, pid) {
+      if (!currentUser) return;
+      const input = document.getElementById('reply-input-' + sid);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const sols = DB.getSolutions();
+      const s = sols.find(x => x.id === sid);
+      if (s) {
+        if (!s.replies) s.replies = [];
+        s.replies.push({
+          id: 'r' + Date.now(),
+          authorId: currentUser.id,
+          content: text,
+          created: new Date().toISOString()
+        });
+        DB.saveSolutions(sols);
+        openProblemModal(pid, true);
+      }
     }
 
     function openSolutionModal(pid) {
@@ -2140,7 +2340,7 @@
       const probs = DB.getProblems();
       const p = probs.find(x => x.id === pid);
       if (p && p.status === 'open') { p.status = 'in-progress'; DB.saveProblems(probs); }
-      setTimeout(() => openProblemModal(pid), 300);
+      setTimeout(() => openProblemModal(pid, true), 300);
     }
 
     function submitProblem() {
@@ -2156,7 +2356,7 @@
         outcome: document.getElementById('prob-outcome').value.trim(),
         deadline: document.getElementById('prob-deadline').value,
         reward: document.getElementById('prob-reward').value.trim(),
-        status: 'open', postedBy: currentUser.id, created: new Date().toISOString(), views: 0, upvotes: 0
+        status: 'open', postedBy: currentUser.id, created: new Date().toISOString(), views: 0, upvotes: 0, upvotedBy: []
       };
       const probs = DB.getProblems();
       probs.push(p);
@@ -2189,7 +2389,135 @@
     ['problem-modal', 'solution-modal'].forEach(id => {
       document.getElementById(id).addEventListener('click', function (e) { if (e.target === this) closeModal(id); });
     });
+
+    // Chatbot logic using Gemini AI
+    document.addEventListener("DOMContentLoaded", () => {
+      const chatbotBtn = document.getElementById('chatbotBtn');
+      const chatbotContainer = document.getElementById('chatbotContainer');
+      const chatbotClose = document.getElementById('chatbotClose');
+      const chatInput = document.getElementById('chatInput');
+      const chatSend = document.getElementById('chatSend');
+      const chatbotMessages = document.getElementById('chatbotMessages');
+
+      const GEMINI_API_KEY = "AIzaSyBSL-3eW8N9Y36pb96J7jfKxlD4LmOIfcE";
+      const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
+      if (chatbotBtn) {
+        chatbotBtn.addEventListener('click', () => {
+          chatbotContainer.classList.add('active');
+          if (chatbotMessages.children.length === 1) { // Only greeting message
+            chatInput.focus();
+          }
+        });
+
+        chatbotClose.addEventListener('click', () => {
+          chatbotContainer.classList.remove('active');
+        });
+
+        function addChatMessage(message, sender) {
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'chat-msg ' + sender;
+          msgDiv.textContent = message;
+          chatbotMessages.appendChild(msgDiv);
+          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        async function getBotResponse(userMsg) {
+          try {
+            const response = await fetch(GEMINI_API_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [{ text: userMsg + " (Reply concisely for a chat widget)" }]
+                }]
+              })
+            });
+
+            if (!response.ok) {
+              console.error('API Error:', response.status, response.statusText);
+              if (response.status === 429) {
+                return 'Sorry, I am a bit overwhelmed right now (Quota exceeded). Please try again in a minute.';
+              }
+              return 'Sorry, I am having trouble connecting to my brain right now. Status: ' + response.status;
+            }
+
+            const data = await response.json();
+
+            if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts.length > 0) {
+              return data.candidates[0].content.parts[0].text;
+            } else {
+              console.error('Unexpected API response format:', data);
+              return 'Sorry, I received an unexpected response format from the AI.';
+            }
+
+          } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            return "Sorry, there was an error processing your request. Please check your internet connection.";
+          }
+        }
+
+        chatSend.addEventListener('click', async () => {
+          const msg = chatInput.value.trim();
+          if (!msg) return;
+
+          chatInput.value = '';
+          chatInput.disabled = true;
+          chatSend.disabled = true;
+
+          addChatMessage(msg, 'user');
+
+          // Add a temporary typing indicator
+          const typingDiv = document.createElement('div');
+          typingDiv.className = 'chat-msg bot';
+          typingDiv.id = 'typing-indicator';
+          typingDiv.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Typing...';
+          chatbotMessages.appendChild(typingDiv);
+          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+          const botReply = await getBotResponse(msg);
+
+          // Remove typing indicator
+          const indicator = document.getElementById('typing-indicator');
+          if (indicator) {
+            indicator.remove();
+          }
+
+          addChatMessage(botReply, 'bot');
+
+          chatInput.disabled = false;
+          chatSend.disabled = false;
+          chatInput.focus();
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && !chatInput.disabled) {
+            chatSend.click();
+          }
+        });
+      }
+    });
   </script>
+
+  <div class="chatbot-btn" id="chatbotBtn">
+    <i class="fab fa-whatsapp"></i>
+  </div>
+
+  <div class="chatbot-container" id="chatbotContainer">
+    <div class="chatbot-header">
+      <h3><i class="fas fa-robot"></i> AI Assistant</h3>
+      <button class="chatbot-close" id="chatbotClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="chat-msg bot">Hello! I am your AI assistant. How can I help you today?</div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="Type a message..." />
+      <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 </body>
 
 </html>
